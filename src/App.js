@@ -8,33 +8,45 @@ const App = () => {
   const handler = () => setCounter(prevValue => prevValue + 1);
   const toggleVisibilityCounter = () => setIsActive(prevValue => !prevValue);
 
-  // useEffect(() => {
-  //   alert('Hello')
-  // }, []);
+  const counterComponent = isActive
+    ? <Counter rerenderCounter={counter} />
+    : null;
+
+  useEffect(() => {
+    alert('Hello');
+  }, []);
 
   return (
     <div>
       <button onClick={toggleVisibilityCounter}>
         Pokaż/ukryj komponent
       </button>
-      {isActive && <Counter />}
+      <button onClick={handler}>
+        Przerenderuj komponent
+      </button>
+      {counterComponent}
     </div>
   );
 }
 
-const Counter = () => {
+const Counter = ({ rerenderCounter }) => {
   const [counter, setCounter] = useState(0);
 
   const handleMouseMove = event => setCounter(event.clientX);
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
-  }, []);
+
+    return () => {
+      alert('Komponent jest odmontowywany');
+      window.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, [rerenderCounter]);
 
   return (
     <div>
       <p>{counter}</p>
-      {/* <p>{rerenderCounter}</p> */}
+      <p>{rerenderCounter}</p>
     </div>
   )
 }
